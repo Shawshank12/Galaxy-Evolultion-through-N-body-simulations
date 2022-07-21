@@ -10,6 +10,11 @@ import sys
 sys.path.append('D:\KSP 3.0\Galaxy-Evolution-through-N-body-simulations\Solar_System_using_Barnes_Hut')
 import barnes_hut as bh
 
+def c2p(arr):
+    radius = (arr[0]**2 + arr[1]**2)**0.5
+    angle = np.arctan(arr[1]/arr[0])
+    return radius, angle
+
 n = 1000
 r = []
 theta = []
@@ -34,7 +39,7 @@ ax.grid(True)
 t_0 = 0
 t = t_0
 dt = 86400
-t_end = 86400 * 365 * 0.3
+t_end = 86400 * 365 * 0.1
 t_array = np.arange(t_0, t_end, dt)
 BIG_G = 6.67e-11
 
@@ -61,9 +66,9 @@ while t<t_end:
     t += dt
 
 fig = plt.figure(dpi=600)
-ax = plt.axes(projection='3d')
-ax.axes.set_xlim3d(left=-8e11, right=8e11) 
-ax.axes.set_ylim3d(bottom=-8e11, top=8e11) 
-ax.axes.set_zlim3d(bottom=-1, top=1)
-for j in range(4):    
-    ax.plot3D(x_pos[j], y_pos[j], z_pos[j])
+ax = plt.axes()
+for i in range(len(x_pos[0])):
+    for j in range(4):    
+        ax.scatter(x_pos[j][i], y_pos[j][i])
+    plt.savefig('D:\KSP 3.0\Plots\plot_{}'.format(i), dpi=600)
+    plt.cla()
