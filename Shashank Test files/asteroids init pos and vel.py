@@ -39,7 +39,7 @@ ax.grid(True)
 t_0 = 0
 t = t_0
 dt = 86400
-t_end = 86400 * 365
+t_end = 86400 * 365 * 0.1
 t_array = np.arange(t_0, t_end, dt)
 BIG_G = 6.67e-11
 
@@ -51,15 +51,20 @@ fig2, ax2 = plt.subplots(subplot_kw={'projection': 'polar'})
 ax2.set_rmax(1e12)
 ax2.set_rlabel_position(-22.5)
 ax2.grid(True)
-
+energy = []
 while t<t_end:
-    a_g = bh.GravAccel(positions, masses)
+    en = 0
+    a_g, potentials = bh.GravAccel(positions, masses)
     for m1_id in range(len(asteroids)):                 
         asteroids[m1_id].vel += a_g[m1_id] * dt
         velocities[m1_id] = asteroids[m1_id].vel
     for e_id in range(len(asteroids)):
         asteroids[e_id].pos += asteroids[e_id].vel * dt
         positions[e_id] = asteroids[e_id].pos
+    for i in range(len(asteroids)):
+        en += 0.5 * asteroids[i].m * np.linalg.norm(asteroids[i].vel)**2
+        en += sum(potentials)
+    energy.append(en)
     r_p = []
     theta_p = []
     for i in range(len(asteroids)):
@@ -67,6 +72,9 @@ while t<t_end:
         r_p.append(ra)
         theta_p.append(th)
     ax2.scatter(theta_p, r_p)
-    fig2.savefig('D:\KSP 3.0\Plots\plot_{}.png'.format(t/86400), dpi=600)
+    #fig2.savefig('D:\KSP 3.0\Plots\plot_{}.png'.format(t/86400), dpi=600)
     ax2.cla()
     t += dt
+
+fig3 = plt.figure()
+plt.plot(t_array, energy)
