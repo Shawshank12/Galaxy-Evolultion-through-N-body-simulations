@@ -24,10 +24,9 @@ for i in range(n):
     r.append(b)
     c = 2*np.pi*np.random.random()
     v_b = 5e2 + np.random.random()*(30e3 - 1e2)
-    v_c = 2*np.pi*np.random.random()
     theta.append(c)
-    mass = 1e2 + np.random.random()*2e10
-    obj = bh.cel_obj(b*np.cos(c), b*np.sin(c), 0, v_b*np.cos(v_c), v_b*np.sin(v_c), 0, mass)
+    mass = 1e2 + np.random.random()*2e5
+    obj = bh.cel_obj(b*np.cos(c), b*np.sin(c), 0, -1*v_b*np.sin(c), v_b*np.cos(c), 0, mass)
     asteroids.append(obj)
 
 fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
@@ -38,7 +37,7 @@ ax.grid(True)
 
 t_0 = 0
 t = t_0
-dt = 86400
+dt = 8640
 t_end = 86400 * 365 * 0.1
 t_array = np.arange(t_0, t_end, dt)
 BIG_G = 6.67e-11
@@ -51,10 +50,12 @@ fig2, ax2 = plt.subplots(subplot_kw={'projection': 'polar'})
 ax2.set_rmax(1e12)
 ax2.set_rlabel_position(-22.5)
 ax2.grid(True)
-energy = []
+ke = []
+pe = []
 while t<t_end:
     en = 0
-    a_g, potentials = bh.GravAccel(positions, masses)
+    p = 0
+    a_g = bh.GravAccel(positions, masses)
     for m1_id in range(len(asteroids)):                 
         asteroids[m1_id].vel += a_g[m1_id] * dt
         velocities[m1_id] = asteroids[m1_id].vel
@@ -63,8 +64,13 @@ while t<t_end:
         positions[e_id] = asteroids[e_id].pos
     for i in range(len(asteroids)):
         en += 0.5 * asteroids[i].m * np.linalg.norm(asteroids[i].vel)**2
-        en += sum(potentials)
-    energy.append(en)
+    for i in range(len(asteroids)):
+        for j in range(i+1, len(asteroids)):
+            if i != j:
+                dist = np.linalg.norm(asteroids[i].pos - asteroids[j].pos) + 0.0001
+                p += (-1 * BIG_G * asteroids[i].m * asteroids[j].m)/dist
+    ke.append(en)
+    pe.append(p)
     r_p = []
     theta_p = []
     for i in range(len(asteroids)):
@@ -77,4 +83,11 @@ while t<t_end:
     t += dt
 
 fig3 = plt.figure()
-plt.plot(t_array, energy)
+plt.plot(t_array, ke)
+fig3 = plt.figure()
+plt.plot(t_array, pe)
+e = []
+for i in range(len(ke)):
+    e.append(ke[i] + pe[i])
+fig5 = plt.figure()
+plt.plot(t_array, e)

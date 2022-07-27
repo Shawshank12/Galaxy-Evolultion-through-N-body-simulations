@@ -39,7 +39,7 @@ while t<t_end:
     for x in orbital_entities:
         k += 0.5 * x.m * (np.linalg.norm(x.vel))**2
     for i in range(len(orbital_entities)):
-        for j in range(len(orbital_entities)):
+        for j in range(i+1, len(orbital_entities)):
             if i != j:
                 dist = np.linalg.norm(orbital_entities[i].pos - orbital_entities[j].pos) + 0.0001
                 p += (-1 * BIG_G * orbital_entities[i].m * orbital_entities[j].m)/dist
