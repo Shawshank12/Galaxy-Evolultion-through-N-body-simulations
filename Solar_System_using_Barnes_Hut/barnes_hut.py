@@ -22,7 +22,6 @@ class Octtree:
             self.mass = masses[0]
             self.id = ids[0]
             self.g = np.zeros(3)
-            self.pot = 0
         else:
             self.generate_children(points, masses, ids, leaves)
             
@@ -48,11 +47,10 @@ class Octtree:
 def TreeWalk(node, node0, thetamax=0.7, G=6.67e-11):
     dx = node.COM - node0.COM
     r = np.linalg.norm(dx)
-    a = node.size/(r + 0.001)
+    a = node.size/(r + 0.0001)
     if r>0:
         if len(node.children)==0 or a < thetamax:
             node0.g += G * node.mass * dx/r**3
-            node0.pot += -1 * G * node.mass * node0.mass/r
         else:
             for c in node.children: TreeWalk(c, node0, thetamax, G)       
 
@@ -62,9 +60,7 @@ def GravAccel(points, masses, thetamax=0.7, G=6.67e-11):
     leaves = []
     topnode = Octtree(center, topsize, points, masses, np.arange(len(points)), leaves)
     accel = np.zeros_like(points)
-    potential = np.zeros_like(points)
     for i,leaf in enumerate(leaves):
         TreeWalk(topnode, leaf, thetamax, G)
         accel[leaf.id] = leaf.g
-        potential[leaf.id] = leaf.pot
-    return accel, potential
+    return accel

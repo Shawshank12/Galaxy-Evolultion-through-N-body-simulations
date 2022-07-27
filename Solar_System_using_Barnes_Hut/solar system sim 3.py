@@ -5,9 +5,11 @@ import barnes_hut
 
 t_0 = 0
 t = t_0
-dt = 864
-t_end = 86400 * 365 * 1
+div = 20
+dt = 86400/div
+t_end = 86400 * 365 * 5
 t_array = np.arange(t_0, t_end, dt)
+BIG_G = 6.67e-11
 
 x_pos = [[],[],[],[]]
 y_pos = [[],[],[],[]]
@@ -33,7 +35,16 @@ pe = []
 while t<t_end:
     k = 0
     p = 0
-    a_g, potential = barnes_hut.GravAccel(positions, masses)
+    a_g = barnes_hut.GravAccel(positions, masses)
+    for x in orbital_entities:
+        k += 0.5 * x.m * (np.linalg.norm(x.vel))**2
+    for i in range(len(orbital_entities)):
+        for j in range(len(orbital_entities)):
+            if i != j:
+                dist = np.linalg.norm(orbital_entities[i].pos - orbital_entities[j].pos) + 0.0001
+                p += (-1 * BIG_G * orbital_entities[i].m * orbital_entities[j].m)/dist
+    ke.append(k)
+    pe.append(p)
     for m1_id in range(len(orbital_entities)):                 
         orbital_entities[m1_id].vel += a_g[m1_id] * dt
         velocities[m1_id] = orbital_entities[m1_id].vel
@@ -44,11 +55,6 @@ while t<t_end:
         x_pos[i-1].append(orbital_entities[i].pos[0])
         y_pos[i-1].append(orbital_entities[i].pos[1])
         z_pos[i-1].append(orbital_entities[i].pos[2])
-    for i in range(len(orbital_entities)):
-        k += 0.5 * orbital_entities[i].m * (np.linalg.norm(orbital_entities[i].vel))**2
-        p += sum(potential)
-    ke.append(k)
-    pe.append(p)
     t += dt
 e = []
 for i in range(len(ke)):
@@ -60,9 +66,9 @@ ax.axes.set_ylim3d(bottom=-2e11, top=2e11)
 ax.axes.set_zlim3d(bottom=-1, top=1)
 for j in range(4):    
     ax.plot3D(x_pos[j], y_pos[j], z_pos[j])
-fig2 = plt.figure()
-plt.plot(t_array, pe)
 fig3 = plt.figure()
-plt.plot(t_array, ke)
+plt.plot(t_array, pe)
 fig4 = plt.figure()
+plt.plot(t_array, ke)
+fig5 = plt.figure()
 plt.plot(t_array, e)
