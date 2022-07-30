@@ -7,7 +7,7 @@ t_0 = 0
 t = t_0
 div = 20
 dt = 86400/div
-t_end = 86400 * 365 * 5
+t_end = 86400 * 365 * 10
 t_array = np.arange(t_0, t_end, dt)
 BIG_G = 6.67e-11
 
@@ -43,8 +43,8 @@ while t<t_end:
             if i != j:
                 dist = np.linalg.norm(orbital_entities[i].pos - orbital_entities[j].pos) + 0.0001
                 p += (-1 * BIG_G * orbital_entities[i].m * orbital_entities[j].m)/dist
-    ke.append(k)
-    pe.append(p)
+    ke.append(k/1e35)
+    pe.append(p/1e35)
     for m1_id in range(len(orbital_entities)):                 
         orbital_entities[m1_id].vel += a_g[m1_id] * dt
         velocities[m1_id] = orbital_entities[m1_id].vel
@@ -68,7 +68,11 @@ for j in range(4):
     ax.plot3D(x_pos[j], y_pos[j], z_pos[j])
 fig3 = plt.figure()
 plt.plot(t_array, pe)
+plt.plot(t_array, ke)
+plt.plot(t_array, e)
 fig4 = plt.figure()
 plt.plot(t_array, ke)
 fig5 = plt.figure()
+plt.plot(t_array, pe)
+fig6 = plt.figure()
 plt.plot(t_array, e)
