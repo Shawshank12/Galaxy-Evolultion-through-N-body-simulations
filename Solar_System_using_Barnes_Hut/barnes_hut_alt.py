@@ -1,4 +1,5 @@
 import numpy as np
+
 class cel_obj:
     def __init__(obj, x, y, z, v_x, v_y, v_z, m):
         obj.pos = np.array([x, y, z])
@@ -19,6 +20,7 @@ class Octtree:
             self.mass = masses[0]
             self.id = ids[0]
             self.g = np.zeros(3)
+            self.pot = 0
         else:
             self.generate_children(points, masses, ids, leaves)
             
@@ -48,6 +50,7 @@ def TreeWalk(node, node0, thetamax=0.7, G=6.67e-11):
     if r>0:
         if len(node.children)==0 or a < thetamax:
             node0.g += G * node.mass * dx/r**3
+            node0.pot += (-1 * G * node0.mass * node.mass)/r
         else:
             for c in node.children: TreeWalk(c, node0, thetamax, G)       
 
@@ -57,7 +60,9 @@ def GravAccel(points, masses, thetamax=0.7, G=6.67e-11):
     leaves = []
     topnode = Octtree(center, topsize, points, masses, np.arange(len(points)), leaves)
     accel = np.zeros_like(points)
+    potentials = np.zeros_like(points)
     for i,leaf in enumerate(leaves):
         TreeWalk(topnode, leaf, thetamax, G)
         accel[leaf.id] = leaf.g
-    return accel
+        potentials[leaf.id] = leaf.pot
+    return accel, potentials

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
-import barnes_hut
+import barnes_hut_alt as barnes_hut
 import time
 
 begin = time.time()
@@ -38,16 +38,11 @@ pe = []
 while t<t_end:
     k = 0
     p = 0
-    a_g = barnes_hut.GravAccel(positions, masses)
+    a_g, ins_pe = barnes_hut.GravAccel(positions, masses)
     for x in orbital_entities:
         k += 0.5 * x.m * (np.linalg.norm(x.vel))**2
-    for i in range(len(orbital_entities)):
-        for j in range(i+1, len(orbital_entities)):
-            if i != j:
-                dist = np.linalg.norm(orbital_entities[i].pos - orbital_entities[j].pos) + 0.0001
-                p += (-1 * BIG_G * orbital_entities[i].m * orbital_entities[j].m)/dist
     ke.append(k/1e35)
-    pe.append(p/1e35)
+    pe.append(sum(ins_pe)/(2*1e35))
     for m1_id in range(len(orbital_entities)):                 
         orbital_entities[m1_id].vel += a_g[m1_id] * dt
         velocities[m1_id] = orbital_entities[m1_id].vel
@@ -82,3 +77,4 @@ plt.plot(t_array, e)
 
 end = time.time()
 print(end - begin)
+

@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Jul 10 20:58:58 2022
-
-@author: Shashank
-"""
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -70,16 +64,6 @@ while t<t_end:
     for e_id in range(len(asteroids)):
         asteroids[e_id].pos += asteroids[e_id].vel * dt
         positions[e_id] = asteroids[e_id].pos
-    for i in range(len(asteroids)):
-        en += 0.5 * asteroids[i].m * np.linalg.norm(asteroids[i].vel)**2
-    for i in range(len(asteroids)):
-        for j in range(i+1, len(asteroids)):
-            if i != j:
-                dist = np.linalg.norm(asteroids[i].pos - asteroids[j].pos) + 0.0001
-                p += (-1 * BIG_G * asteroids[i].m * asteroids[j].m)/dist
-    ke.append(en/e_scale)
-    pe.append(p/e_scale)
-    e.append((en+p)/e_scale)
     r_p = []
     theta_p = []
     for i in range(len(asteroids)):
@@ -90,13 +74,5 @@ while t<t_end:
     fig2.savefig('D:\KSP 3.0\Plots\plot_{}.png'.format(t/86400), dpi=600)
     ax2.cla()
     t += dt
-
-fig3 = plt.figure()
-plt.plot(t_array, ke)
-fig3 = plt.figure()
-plt.plot(t_array, pe)
-fig5 = plt.figure()
-plt.plot(t_array, e)
-
 end = time.time()
 print(end - begin)
