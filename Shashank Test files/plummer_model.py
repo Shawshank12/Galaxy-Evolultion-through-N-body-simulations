@@ -1,17 +1,49 @@
 import numpy as np
 
 class Body:
-    def __init__(self, pos = np.array([0.0,0.0,0.0]), vel=np.array([0.0,0.0,0.0]), mass=0.0):
+    def __init__(self, idno, pos = np.array([0.0,0.0,0.0]), vel=np.array([0.0,0.0,0.0]), mass=0.0):
         self.pos = pos
         self.vel = vel
         self.mass = mass
-
+        self.id = idno
+    
+    def E_k(self):
+        return 0.5 * self.mass * np.linalg.norm(self.vel)**2
+    
+    def E_p(self, obj_array):
+        p = 0
+        for x in obj_array.body:
+            if x.id != self.id:
+                dist = np.linalg.norm(x.pos - self.pos)
+                p += (-1 * self.mass * x.mass)/dist
+        return p
+    
 class NBody:
     def __init__(self, n):
         self.body = []
         for i in range(n):
-            self.body.append(Body())
+            x = Body(idno = i)
+            self.body.append(x)
             
+    def E_k(self):
+        e = 0
+        for x in self.body:
+            e += x.E_k()
+        return e
+    
+    def E_p(self):
+        p = 0
+        for x in self.body:
+            p += x.E_p(self)
+        return p/2
+    
+    def write_diagnostics(self):
+        e_k = self.E_k()
+        e_p = self.E_p()
+        e_t = e_k + e_p
+        print(e_k, e_p, e_t)
+        
+        
 def ret_sph(r):
     v = np.array([0.0,0.0,0.0])
     theta = np.arccos(np.random.uniform(-1, 1))
@@ -37,6 +69,6 @@ def make_plummer(n):
         b.vel = ret_sph(velocity)
     return nb
 
-test = make_plummer(4)
-
+test = make_plummer(100)
+test.write_diagnostics()
 
