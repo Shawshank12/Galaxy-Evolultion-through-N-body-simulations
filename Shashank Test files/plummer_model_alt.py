@@ -54,8 +54,13 @@ def ret_sph(r):
     v[1] = r * np.sin(theta) * np.sin(phi)
     v[2] = r * np.cos(theta)
     return v
-    
-            
+
+"""
+n = number of particles
+M = total mass of system
+a = structural length scale
+"""
+     
 def make_plummer(n, M, a):
     nb = NBody(n)
     for b in nb.body:
@@ -71,6 +76,7 @@ def make_plummer(n, M, a):
         b.vel = ret_sph(velocity)
     return nb
 
-test = make_plummer(5000, 1e30, 1)
+test = make_plummer(2000, 1e30, 1e10)
 test.write_diagnostics()
+print(test.body[0].pos, test.body[0].vel)
 
