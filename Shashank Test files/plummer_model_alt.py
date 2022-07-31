@@ -76,7 +76,3 @@ def make_plummer(n, M, a):
         b.vel = ret_sph(velocity)
     return nb
 
-test = make_plummer(2000, 1e30, 1e10)
-test.write_diagnostics()
-print(test.body[0].pos, test.body[0].vel)
-
