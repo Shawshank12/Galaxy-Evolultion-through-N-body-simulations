@@ -41,10 +41,10 @@ class Octtree:
                     dx = 0.5*self.size*(np.array([i,j,k])-0.5)
                     self.children.append(Octtree(self.center+dx, self.size/2, points[in_octant], masses[in_octant], ids[in_octant], leaves))
         
-def TreeWalk(node, node0, thetamax=0.7, G=6.67e-11):
+def TreeWalk(node, node0, thetamax=0.7, G=6.67e-11, soft=0.005):
     dx = node.COM - node0.COM
     r = np.linalg.norm(dx)
-    a = node.size/(r + 0.0001)
+    a = node.size/(r + soft)
     if r>0:
         if len(node.children)==0 or a < thetamax:
             node0.g += G * node.mass * dx/r**3
