@@ -69,6 +69,6 @@ def make_plummer(n):
         b.vel = ret_sph(velocity)
     return nb
 
-test = make_plummer(100)
+test = make_plummer(1000)
 test.write_diagnostics()
 
