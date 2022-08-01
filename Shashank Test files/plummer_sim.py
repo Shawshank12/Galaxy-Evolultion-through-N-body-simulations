@@ -15,7 +15,9 @@ import time
 
 begin = time.time()
 
-sc = plum.make_plummer(200, 1e20, 1e16)
+scale = 1e10
+
+sc = plum.make_plummer(200, 1e20, scale)
 sc.write_diagnostics()
 
 positions = np.array([x.pos for x in sc.body])
@@ -24,16 +26,17 @@ masses = np.array([x.mass for x in sc.body])
 
 t_0 = 0
 t = t_0
-div = 1
+div = 0.1
 dt = 86400/div
 t_end = 86400 * 365 * 5
 t_array = np.arange(t_0, t_end, dt)
 
-f = plt.figure(dpi=600)
+fig = plt.figure(dpi=600)
 ax = plt.axes(projection='3d')
-ax.axes.set_xlim3d(left=-1e17, right=1e17) 
-ax.axes.set_ylim3d(bottom=-1e17, top=1e17) 
-ax.axes.set_zlim3d(bottom=-1e17, top=1e17)
+ax.axes.set_xlim3d(left=-1*scale, right=scale) 
+ax.axes.set_ylim3d(bottom=-1*scale, top=scale) 
+ax.axes.set_zlim3d(bottom=-1*scale, top=scale)
+j = 0
 
 while t<t_end:
     a_g = barnes_hut.GravAccel(positions, masses)
@@ -54,7 +57,9 @@ while t<t_end:
         z.append(i.pos[2])
         
     ax.scatter3D(x,y,z)
-    
+    fig.savefig('D:\KSP 3.0\Plots\plummer_plot_{}.png'.format(j), dpi=600)
+    ax.cla()
+    j += 1
     t += dt
 
 end = time.time()
