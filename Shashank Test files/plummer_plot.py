@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
-import plummer_model_alt as plum
+import plummer_model as plum
 from mpl_toolkits import mplot3d
 
-sc = plum.make_plummer(1000, 1e30, 1e16)
-sc.write_diagnostics()
+sc = plum.make_plummer(1000)
+print(sc.energy_vals())
 
 x = []
 y = []
@@ -16,8 +16,9 @@ for i in sc.body:
     
 fig = plt.figure(dpi=600)
 ax = plt.axes(projection='3d')
-ax.axes.set_xlim3d(left=-1e17, right=1e17) 
-ax.axes.set_ylim3d(bottom=-1e17, top=1e17) 
-ax.axes.set_zlim3d(bottom=-1e17, top=1e17)
+a = 2
+ax.axes.set_xlim3d(left=-1*a, right=a) 
+ax.axes.set_ylim3d(bottom=-1*a, top=a) 
+ax.axes.set_zlim3d(bottom=-1*a, top=a)
 ax.scatter3D(x,y,z)
 

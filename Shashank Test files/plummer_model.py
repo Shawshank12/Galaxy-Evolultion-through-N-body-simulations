@@ -37,11 +37,11 @@ class NBody:
             p += x.E_p(self)
         return p/2
     
-    def write_diagnostics(self):
+    def energy_vals(self):
         e_k = self.E_k()
         e_p = self.E_p()
         e_t = e_k + e_p
-        print(e_k, e_p, e_t)
+        return e_k, e_p, e_t
         
         
 def ret_sph(r):
@@ -68,7 +68,3 @@ def make_plummer(n):
         velocity = x * np.sqrt(2.0) * (1.0 + radius**2)**(-0.25)
         b.vel = ret_sph(velocity)
     return nb
-
-test = make_plummer(1000)
-test.write_diagnostics()
-

@@ -18,7 +18,7 @@ begin = time.time()
 scale = 1e10
 
 sc = plum.make_plummer(200, 1e20, scale)
-sc.write_diagnostics()
+print(sc.energy_vals())
 
 positions = np.array([x.pos for x in sc.body])
 velocities = np.array([x.vel for x in sc.body])
@@ -33,10 +33,15 @@ t_array = np.arange(t_0, t_end, dt)
 
 fig = plt.figure(dpi=600)
 ax = plt.axes(projection='3d')
-ax.axes.set_xlim3d(left=-1*scale, right=scale) 
-ax.axes.set_ylim3d(bottom=-1*scale, top=scale) 
-ax.axes.set_zlim3d(bottom=-1*scale, top=scale)
+plot_scale = 1e9
+ax.axes.set_xlim3d(left=-1*plot_scale, right=plot_scale) 
+ax.axes.set_ylim3d(bottom=-1*plot_scale, top=plot_scale) 
+ax.axes.set_zlim3d(bottom=-1*plot_scale, top=plot_scale)
 j = 0
+
+ke = []
+pe = []
+e = []
 
 while t<t_end:
     a_g = barnes_hut.GravAccel(positions, masses)
@@ -46,6 +51,11 @@ while t<t_end:
     for e_id in range(len(sc.body)):
         sc.body[e_id].pos += sc.body[e_id].vel * dt
         positions[e_id] = sc.body[e_id].pos
+    
+    k, p, tot = sc.energy_vals()
+    ke.append(k)
+    pe.append(p)
+    e.append(tot)
     
     x = []
     y = []
@@ -61,6 +71,17 @@ while t<t_end:
     ax.cla()
     j += 1
     t += dt
+
+fig2 = plt.figure()
+plt.plot(t_array, ke)
+plt.plot(t_array, pe)
+plt.plot(t_array, e)
+fig3 = plt.figure()
+plt.plot(t_array, ke)
+fig4 = plt.figure()
+plt.plot(t_array, pe)
+fig5 = plt.figure()
+plt.plot(t_array, e)
 
 end = time.time()
 print(end - begin)

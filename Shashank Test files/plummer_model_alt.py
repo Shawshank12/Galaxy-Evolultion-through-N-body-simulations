@@ -39,11 +39,11 @@ class NBody:
             p += x.E_p(self)
         return p/2
     
-    def write_diagnostics(self):
+    def energy_vals(self):
         e_k = self.E_k()
         e_p = self.E_p()
         e_t = e_k + e_p
-        print(e_k, e_p, e_t)
+        return e_k, e_p, e_t
         
         
 def ret_sph(r):
