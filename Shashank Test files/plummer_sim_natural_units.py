@@ -20,7 +20,7 @@ t_0 = 0
 t = t_0
 div = 1
 dt = 86400/div
-t_end = 86400 * 365 * 1
+t_end = 86400 * 365 * 10
 t_array = np.arange(t_0, t_end, dt)
 
 fig = plt.figure(dpi=600)
