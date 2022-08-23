@@ -27,6 +27,18 @@ from treecode import oct_tree, potential
 syspath.append(path.join(path.dirname(__file__), '..', 'misc'))
 G = 44920.0
 
+def main():
+    init()
+    g_coords, g_vels, g_masses = generate_galaxy()
+    print(g_coords, g_masses)
+    x = [a[0] for a in g_coords]
+    y = [a[1] for a in g_coords]
+    z = [a[2] for a in g_coords]
+    fig = plt.figure(dpi=600)
+    ax = plt.axes(projection='3d')
+    #plt.scatter(x,y,s=0.1)
+    ax.scatter3D(x, y, z, s=0.2)
+    
 def init():
   global M_halo, M_disk, M_bulge, M_gas
   global N_halo, N_disk, N_bulge, N_gas
@@ -240,6 +252,7 @@ def fill_potential_grid(coords_stars, coords_gas=None):
       gravtree.insert(part, M_gas/N_gas)
  
   print ("Filling potential grid...")
+  global loop
   def loop(n_loop, N_CORES):
     for i in range(n_loop*N_rho*Nz/N_CORES, (1+n_loop)*N_rho*Nz/N_CORES):
       prog[n_loop] = 100*float(i-n_loop*N_rho*Nz/N_CORES)/(N_rho*Nz/N_CORES)
@@ -446,33 +459,11 @@ def generate_galaxy():
     else:
       coords = np.concatenate((coords_halo, coords_stars))
 
-  if path.isfile('potential_data.txt'):
-    if force_yes:
-      ans = "y"
-    elif force_no:
-      ans = "n"
-    else:
-      print ("Use existing potential tabulation in potential_data.txt?\n"\
-              "Make sure it refers to the current parameters. (y/n)")
-      ans = input()
-      while ans not in "yn":
-        print("Please give a proper answer. (y/n)")
-        ans = input()
-    if ans == "y":
-      phi_grid = np.loadtxt('potential_data.txt')
-    else:
-      remove('potential_data.txt')
-      if(gas):
-        fill_potential_grid(coords_stars, coords_gas) 
-      else:
-        fill_potential_grid(coords_stars) 
-      np.savetxt('potential_data.txt', phi_grid)
+  if(gas):
+    fill_potential_grid(coords_stars, coords_gas)
   else:
-    if(gas):
-      fill_potential_grid(coords_stars, coords_gas)
-    else:
-      fill_potential_grid(coords_stars) 
-    np.savetxt('potential_data.txt', phi_grid)
+    fill_potential_grid(coords_stars) 
+
   if(gas):
     print ("Setting temperatures...")
     U, T_cl_grid = set_temperatures(coords_gas) 
@@ -484,26 +475,24 @@ def generate_galaxy():
     print ("Setting velocities...")
     vels = set_velocities(coords, None)
   coords = np.array(coords, order='C')
-  return coords, vels      
+  
+  ids = np.arange(1, N_total+1, 1)
+  m_halo = np.empty(N_halo)
+  m_halo.fill(halo_cut_M/N_halo)
+  m_disk = np.empty(N_disk)
+  m_disk.fill(M_disk*disk_cut/N_disk)
+  if(bulge):
+    m_bulge = np.empty(N_bulge)
+    m_bulge.fill(bulge_cut_M/N_bulge)
+  if(gas):
+    m_gas = np.empty(N_gas)
+    m_gas.fill(M_gas*disk_cut/N_gas)
+  if(bulge):
+    masses = np.concatenate((m_gas, m_halo, m_disk, m_bulge))
+  else:
+    masses = np.concatenate((m_gas, m_halo, m_disk))
+  
+  return coords, vels, masses      
 
-init()
-halo_pos = set_halo_positions()
-disk_pos = set_disk_positions(N_gas, z0_gas)
-bulge_pos = set_bulge_positions()
-print(disk_pos)
-
-x1 = [a[0] for a in halo_pos]
-y1 = [a[1] for a in halo_pos]
-z1 = [a[2] for a in halo_pos]
-
-x2 = [a[0] for a in disk_pos]
-y2 = [a[1] for a in disk_pos]
-z2 = [a[2] for a in disk_pos]
-
-x3 = [a[0] for a in bulge_pos]
-y3 = [a[1] for a in bulge_pos]
-z3 = [a[2] for a in bulge_pos]
-
-#plt.scatter(x1, y1, color='darkgrey')
-plt.scatter(x2, y2, color='grey')
-plt.scatter(x3, y3, color='k')
+if __name__ == '__main__':
+  main()
