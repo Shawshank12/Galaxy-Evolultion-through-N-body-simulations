@@ -39,6 +39,10 @@ def main():
     #plt.scatter(x,y,s=0.1)
     ax.scatter3D(x, y, z, s=0.2)
     
+    np.savetxt("galaxy_coords.txt", g_coords)
+    np.savetxt("galaxy_vels.txt", g_vels)
+    np.savetxt("galaxy_masses.txt", g_masses)
+    
 def init():
   global M_halo, M_disk, M_bulge, M_gas
   global N_halo, N_disk, N_bulge, N_gas
