@@ -58,9 +58,9 @@ while t<t_end:
         y.append(i.pos[1])
         z.append(i.pos[2])
         
+    ax.cla()  
     ax.scatter3D(x,y,z)
     fig.savefig('D:\KSP 3.0\Plots\plummer_plot_{}.png'.format(j), dpi=600)
-    ax.cla()
     j += 1
     t += dt
 
