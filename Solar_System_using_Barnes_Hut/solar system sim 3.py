@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 from mpl_toolkits import mplot3d
 import barnes_hut
 import time
@@ -8,7 +9,7 @@ begin = time.time()
 
 t_0 = 0
 t = t_0
-div = 20
+div = 1
 dt = 86400/div
 t_end = 86400 * 365 * 1
 t_array = np.arange(t_0, t_end, dt)
@@ -67,8 +68,13 @@ ax = plt.axes(projection='3d')
 ax.axes.set_xlim3d(left=-2e11, right=2e11) 
 ax.axes.set_ylim3d(bottom=-2e11, top=2e11) 
 ax.axes.set_zlim3d(bottom=-1, top=1)
-for j in range(4):    
-    ax.plot3D(x_pos[j], y_pos[j], z_pos[j])
+colors = ['red', 'yellow', 'blue', 'orange']
+def anim_func(i):
+    for j in range(4):    
+        ax.plot3D(x_pos[j][:i], y_pos[j][:i], z_pos[j][:i], color=colors[j])
+animation = FuncAnimation(fig, anim_func, interval = 50)
+animation.save("solar_system.gif", dpi=600)
+'''
 fig3 = plt.figure()
 plt.plot(t_array, pe)
 plt.plot(t_array, ke)
@@ -79,6 +85,7 @@ fig5 = plt.figure()
 plt.plot(t_array, pe)
 fig6 = plt.figure()
 plt.plot(t_array, e)
+'''
 
 end = time.time()
 print(end - begin)
