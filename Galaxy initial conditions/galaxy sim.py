@@ -21,8 +21,8 @@ init_m = np.loadtxt("galaxy_masses.txt")
 
 t_0 = 0
 t = t_0
-div = 1
-dt = 86400/div
+div = 1/30
+dt = int(86400/div)
 t_end = 86400 * 365 * 10
 t_array = np.arange(t_0, t_end, dt)
 
@@ -37,8 +37,8 @@ y = [i[1] for i in positions]
 z = [i[2] for i in positions]
 ax.scatter3D(x,y,z, s=0.2)
 
-def update_state(positions, velocities, massses, dt):
-    a_g = bh.GravAccel(positions, masses)
+def update_state(i, positions, velocities, massses, dt):
+    a_g = bh.GravAccel(positions, masses, G = 44920.0)
     for m1_id in range(len(velocities)):                 
         velocities[m1_id] += a_g[m1_id] * dt
     for e_id in range(len(positions)):
@@ -49,7 +49,7 @@ def update_state(positions, velocities, massses, dt):
     ax.cla()    
     ax.scatter3D(x,y,z, s=0.2)
 
-#animation = anim.FuncAnimation(fig, update_state, fargs = [positions, velocities, masses, dt], interval=50)
-
+animation = anim.FuncAnimation(fig, update_state, fargs = [positions, velocities, masses, dt], interval=50)
+animation.save("galaxy.gif", dpi=600)
 end = time.time()
 print(end - begin)

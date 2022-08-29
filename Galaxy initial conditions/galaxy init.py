@@ -491,10 +491,12 @@ def generate_galaxy():
   if(gas):
     m_gas = np.empty(N_gas)
     m_gas.fill(M_gas*disk_cut/N_gas)
-  if(bulge):
+  if(bulge and gas):
     masses = np.concatenate((m_gas, m_halo, m_disk, m_bulge))
-  else:
+  elif(gas):
     masses = np.concatenate((m_gas, m_halo, m_disk))
+  else:
+      masses = np.concatenate((m_halo, m_disk))
   
   return coords, vels, masses      
 
