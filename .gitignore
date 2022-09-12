@@ -1,3 +1,7 @@
+#own files
+/galaxy_coords.txt
+/galaxy_vels.txt
+/galaxy_masses.txt
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
