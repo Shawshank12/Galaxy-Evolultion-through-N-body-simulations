@@ -69,12 +69,13 @@ ax.axes.set_xlim3d(left=-2e11, right=2e11)
 ax.axes.set_ylim3d(bottom=-2e11, top=2e11) 
 ax.axes.set_zlim3d(bottom=-1, top=1)
 colors = ['red', 'yellow', 'blue', 'orange']
+
 def anim_func(i):
     for j in range(4):    
         ax.plot3D(x_pos[j][:i], y_pos[j][:i], z_pos[j][:i], color=colors[j])
 animation = FuncAnimation(fig, anim_func, interval = 50)
 animation.save("solar_system.gif", dpi=600)
-'''
+
 fig3 = plt.figure()
 plt.plot(t_array, pe)
 plt.plot(t_array, ke)
@@ -85,7 +86,6 @@ fig5 = plt.figure()
 plt.plot(t_array, pe)
 fig6 = plt.figure()
 plt.plot(t_array, e)
-'''
 
 end = time.time()
 print(end - begin)
