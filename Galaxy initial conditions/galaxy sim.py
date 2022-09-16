@@ -19,11 +19,14 @@ init_pos = np.loadtxt("galaxy_coords.txt")
 init_vel = np.loadtxt("galaxy_vels.txt")
 init_m = np.loadtxt("galaxy_masses.txt")
 
+init_pos *= 3.0856e19
+init_vel *= 1e3
+init_m *= 2e40
+
 t_0 = 0
 t = t_0
-div = 1/60
-dt = int(86400/div)
-t_end = 86400 * 365 * 5
+dt = 86400*365
+t_end = 86400 * 365 * 100
 t_array = np.arange(t_0, t_end, dt)
 n_frames = int((t_end - t_0)/dt)
 
@@ -33,10 +36,11 @@ masses = init_m
 
 fig = plt.figure(dpi=600)
 ax = plt.axes(projection='3d')
-plot_scale = 1e18
-ax.axes.set_xlim3d(left=-1*plot_scale, right=plot_scale) 
-ax.axes.set_ylim3d(bottom=-1*plot_scale, top=plot_scale) 
-ax.axes.set_zlim3d(bottom=-1*plot_scale, top=plot_scale)
+plot_scale = 5e22
+ax.set_xlim(left=-1*plot_scale, right=plot_scale) 
+ax.set_ylim(bottom=-1*plot_scale, top=plot_scale) 
+ax.set_zlim(bottom=-1*plot_scale, top=plot_scale)
+plt.autoscale(False)
 
 x_t = []
 y_t = []
@@ -44,7 +48,7 @@ z_t = []
 j = 1
 
 while t<t_end:
-    a_g = bh.GravAccel(positions, masses, G = 44920.0)
+    a_g = bh.GravAccel(positions, masses)
     for m1_id in range(len(velocities)):                 
         velocities[m1_id] += a_g[m1_id] * dt
     for e_id in range(len(positions)):
@@ -63,14 +67,14 @@ def init_gif():
     x_init = [i[0] for i in init_pos]
     y_init = [i[1] for i in init_pos]
     z_init = [i[2] for i in init_pos]
-    ax.scatter3D(x_init,y_init,z_init, s=0.2)
+    ax.scatter(x_init,y_init,z_init, s=0.2)
     
 def update_state(i):
     ax.cla()    
-    ax.scatter3D(x_t[i],y_t[i],z_t[i], s=0.2)
+    ax.scatter(x_t[i],y_t[i],z_t[i], s=0.2)
     print("frame {} rendered".format(i))
     
-animation = anim.FuncAnimation(fig, init_func=init_gif, func=update_state, save_count=n_frames, interval=50)
+animation = anim.FuncAnimation(fig, init_func=init_gif, func=update_state, save_count=n_frames, interval=200)
 animation.save("galaxy.gif", dpi=600)
 end = time.time()
 print(end - begin)

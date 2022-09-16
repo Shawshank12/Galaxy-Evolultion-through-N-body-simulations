@@ -82,15 +82,6 @@ def init():
   output = args.o
   input_ = args.i
   
-  if args.hdf5:
-    file_format = 'hdf5'
-  else:
-    file_format = 'gadget2'
-
-  if not path.isfile(input_):
-    print("Input file not found:"), input_
-    exit(0)
-
   config = configparser.ConfigParser()
   config.read(input_)
   # Halo

@@ -7,7 +7,7 @@ import time
 
 begin = time.time()
 
-t_0 = 0
+t_0 = 0 
 t = t_0
 div = 1
 dt = 86400/div
