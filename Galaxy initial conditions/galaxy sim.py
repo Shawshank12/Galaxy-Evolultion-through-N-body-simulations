@@ -25,8 +25,8 @@ init_m *= 2e40
 
 t_0 = 0
 t = t_0
-dt = 86400*365
-t_end = 86400 * 365 * 100
+dt = 86400*365*200
+t_end = 86400 * 365 * 50000
 t_array = np.arange(t_0, t_end, dt)
 n_frames = int((t_end - t_0)/dt)
 

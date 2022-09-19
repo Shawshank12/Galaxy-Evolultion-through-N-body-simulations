@@ -22,7 +22,10 @@ z_init = [i[2] for i in init_pos]
 
 print(init_vel)
 
-f = plt.figure()
+f = plt.figure(dpi=600)
 ax = plt.axes(projection='3d')
-
+plot_scale = 2e22
+ax.set_xlim(left=-1*plot_scale, right=plot_scale) 
+ax.set_ylim(bottom=-1*plot_scale, top=plot_scale) 
+ax.set_zlim(bottom=-1*plot_scale, top=plot_scale)
 ax.scatter3D(x_init, y_init, z_init, s=0.2)
