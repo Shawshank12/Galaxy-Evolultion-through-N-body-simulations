@@ -10,6 +10,7 @@ import sys
 sys.path.append('D:\KSP 3.0\Galaxy-Evolution-through-N-body-simulations\Solar_System_using_Barnes_Hut')
 import barnes_hut as bh
 import time
+from matplotlib.animation import FuncAnimation
 
 begin = time.time()
 
@@ -18,25 +19,34 @@ def c2p(arr):
     angle = np.arctan2(arr[1], arr[0])
     return radius, angle
 
-n = 200
+BIG_G = 6.67e-11
+
+n = 750
 r = []
 theta = []
 asteroids = []
 sun = bh.cel_obj(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.989e30)
+jupiter = bh.cel_obj(778.570e9, 0.0, 0.0, 0.0, 13e3, 0.0, 1898.19e24)
 for i in range(n):
     if i == 0:
         asteroids.append(sun)
-    b = 229e9 + np.random.random()*(777e9 - 229e9)
-    r.append(b)
-    c = 2*np.pi*np.random.random()
-    v_b = 5e2 + np.random.random()*(30e3 - 1e2)
-    theta.append(c)
+        asteroids.append(jupiter)
     mass = 1e2 + np.random.random()*2e5
+    c = 2*np.pi*np.random.random()
+    b = 229e9 + np.random.random()*(777e9 - 229e9)
+    p = 0
+    if len(asteroids)>1:
+        for i in range(len(asteroids)):
+            dist = np.linalg.norm(np.array([b*np.cos(c), b*np.sin(c), 0]) - asteroids[i].pos)
+            p += (-1 * BIG_G * mass * asteroids[i].m)/dist
+    v_b = np.sqrt(-1*p/mass)
+    r.append(b)
+    theta.append(c) 
     obj = bh.cel_obj(b*np.cos(c), b*np.sin(c), 0, -1*v_b*np.sin(c), v_b*np.cos(c), 0, mass)
     asteroids.append(obj)
 
 fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
-ax.scatter(theta, r)
+ax.scatter(theta, r, s=0.8)
 ax.set_rmax(1e12)
 ax.set_rlabel_position(-22.5)
 ax.grid(True)
@@ -44,7 +54,7 @@ ax.grid(True)
 t_0 = 0
 t = t_0
 dt = 86400
-t_end = 86400 * 365 * 1
+t_end = 86400 * 365 * 0.2
 t_array = np.arange(t_0, t_end, dt)
 BIG_G = 6.67e-11
 
@@ -60,6 +70,10 @@ ke = []
 pe = []
 e = []
 e_scale = 1e15
+r_total = []
+theta_total = []
+k = 1
+
 while t<t_end:
     en = 0
     p = 0
@@ -86,17 +100,41 @@ while t<t_end:
         ra, th = c2p(asteroids[i].pos)
         r_p.append(ra)
         theta_p.append(th)
-    ax2.scatter(theta_p, r_p)
-    fig2.savefig('D:\KSP 3.0\Plots\plot_{}.png'.format(t/86400), dpi=600)
-    ax2.cla()
+    r_total.append(r_p)
+    theta_total.append(theta_p)
+    #print("Step {} done".format(k))
+    k += 1
     t += dt
 
-fig3 = plt.figure()
+def update_func(i):
+    ax2.cla()
+    ax2.scatter(theta_total[i], r_total[i], s=0.5)
+    print("Frame {} rendered".format(i))
+
+#animation = FuncAnimation(fig2, update_func, interval = 50, save_count=70)
+#animation.save("asteroid_belt.gif", dpi=600)
+
+fig6 = plt.figure()
+plt.xlabel("Time (s)")
+plt.ylabel("Energy (J)")
 plt.plot(t_array, ke)
+plt.plot(t_array, pe)
+plt.plot(t_array, e)
 fig3 = plt.figure()
+plt.xlabel("Time (s)")
+plt.ylabel("Kinetic Energy (J)")
+plt.plot(t_array, ke)
+fig4 = plt.figure()
+plt.xlabel("Time (s)")
+plt.ylabel("Potential Energy (J)")
 plt.plot(t_array, pe)
 fig5 = plt.figure()
+plt.xlabel("Time (s)")
+plt.ylabel("Total Energy (J)")
 plt.plot(t_array, e)
+
+print(ke[0],pe[0],e[0])
+print(ke[-1],pe[-1],e[-1])
 
 end = time.time()
 print(end - begin)

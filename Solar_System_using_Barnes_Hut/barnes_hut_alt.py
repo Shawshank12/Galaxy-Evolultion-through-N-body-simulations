@@ -64,5 +64,5 @@ def GravAccel(points, masses, thetamax=0.7, G=6.67e-11):
     for i,leaf in enumerate(leaves):
         TreeWalk(topnode, leaf, thetamax, G)
         accel[leaf.id] = leaf.g
-        potentials[leaf.id] = leaf.pot
+        potentials[leaf.id] = 0.5*leaf.pot
     return accel, potentials
